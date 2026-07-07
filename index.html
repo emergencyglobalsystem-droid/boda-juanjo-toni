@@ -496,32 +496,87 @@
       position: relative;
     }
 
-    .story-photo {
+    .story-slider {
+      position: relative;
       width: 100%;
-      aspect-ratio: 3/4;
+      aspect-ratio: 3/2;
       border-radius: 24px;
       overflow: hidden;
       background: var(--brand-pale);
       box-shadow: var(--shadow);
     }
 
-    .story-photo img {
+    .story-slides {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform .5s ease;
+    }
+
+    .story-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .story-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    .story-photo-placeholder {
-      width: 100%;
-      height: 100%;
+    .story-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Dancing Script', cursive;
-      font-size: 64px;
-      color: var(--brand-deep);
-      opacity: 0.5;
+      box-shadow: 0 4px 14px rgba(13, 13, 13, 0.18);
+    }
+
+    .story-arrow--prev {
+      left: 12px;
+    }
+
+    .story-arrow--next {
+      right: 12px;
+    }
+
+    .story-dots {
+      position: absolute;
+      bottom: 14px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .story-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .story-dot.active {
+      background: var(--brand);
+      width: 22px;
+      border-radius: 5px;
     }
 
 
@@ -1550,17 +1605,6 @@
     }
 
 
-    /* ════════ Historia: recorte íntimo de la pareja ════════ */
-    .story-photo--illu {
-      background: var(--cream);
-    }
-
-    .story-photo--illu img {
-      object-fit: cover;
-      /* el banner es muy ancho; encuadramos a la pareja (lado derecho) */
-      object-position: 82% center;
-    }
-
 
 
     /* ────────── FLORES DECORATIVAS ────────── */
@@ -1690,10 +1734,19 @@
 
         <div class="story">
           <div class="story-figure reveal">
-            <div class="story-photo story-photo--illu">
-              <img id="storyIllu" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                alt="Juanjo y Toñi" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-              <div class="story-photo-placeholder" style="display:none;">J&amp;T</div>
+            <div class="story-slider" id="storySlider">
+              <div class="story-slides" id="storySlides">
+                <div class="story-slide"><img src="historia/historia-1.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-2.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-3.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-4.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-5.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-6.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+                <div class="story-slide"><img src="historia/historia-7.jpg" alt="Juanjo y Toñi" loading="lazy"></div>
+              </div>
+              <button class="story-arrow story-arrow--prev" onclick="storySlideGo(-1)" aria-label="Foto anterior">‹</button>
+              <button class="story-arrow story-arrow--next" onclick="storySlideGo(1)" aria-label="Foto siguiente">›</button>
+              <div class="story-dots" id="storyDots"></div>
             </div>
           </div>
 
@@ -1945,11 +1998,47 @@
     const votedSongs = new Set();
 
 
-    // ── VENUE BG ──
-    // ── Reutiliza la ilustración del hero en la sección Historia (sin duplicar bytes) ──
+    // ── STORY SLIDER ──
     (function () {
-      var h = document.getElementById('heroIllu'), s = document.getElementById('storyIllu');
-      if (h && s) { var set = function () { s.src = h.currentSrc || h.src; }; if (h.complete) set(); else h.addEventListener('load', set); }
+      const track = document.getElementById('storySlides');
+      const dotsWrap = document.getElementById('storyDots');
+      if (!track || !dotsWrap) return;
+      const count = track.children.length;
+      let index = 0, timer = null;
+
+      for (let i = 0; i < count; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'story-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Ir a la foto ' + (i + 1));
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(dot);
+      }
+
+      function goTo(i) {
+        index = (i + count) % count;
+        track.style.transform = 'translateX(-' + (index * 100) + '%)';
+        dotsWrap.querySelectorAll('.story-dot').forEach((d, di) => d.classList.toggle('active', di === index));
+      }
+
+      function restartAutoplay() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(index + 1), 4500);
+      }
+
+      window.storySlideGo = function (delta) { goTo(index + delta); restartAutoplay(); };
+
+      // Swipe táctil
+      let startX = null;
+      const slider = document.getElementById('storySlider');
+      slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+      slider.addEventListener('touchend', e => {
+        if (startX === null) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) storySlideGo(dx < 0 ? 1 : -1);
+        startX = null;
+      }, { passive: true });
+
+      restartAutoplay();
     })();
 
 
