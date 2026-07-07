@@ -919,13 +919,21 @@
       width: 44px;
     }
 
-    /* Easter egg: los gatos de la ilustración, asomando al pie del footer */
+    /* Easter egg: los gatos de la ilustración, asomando al final de la página */
     .ft-cats {
       position: relative;
       height: 78px;
       max-width: 300px;
       margin: 34px auto 0;
       pointer-events: none;
+    }
+
+    .ft-cats--light {
+      margin: 56px auto 0;
+    }
+
+    .ft-cats--light .ft-cat-2 {
+      opacity: 0.92;
     }
 
     .ft-cat {
@@ -2059,6 +2067,12 @@
             </div>
           </div>
         </div>
+
+        <div class="ft-cats ft-cats--light" aria-hidden="true">
+          <img class="ft-cat ft-cat-1" src="files/gato-1.png" alt="" loading="lazy">
+          <img class="ft-cat ft-cat-2" src="files/gato-2.png" alt="" loading="lazy">
+          <img class="ft-cat ft-cat-3" src="files/gato-3.png" alt="" loading="lazy">
+        </div>
       </div>
     </section>
 
@@ -2074,11 +2088,6 @@
           <circle cx="13" cy="7" r="1.4" fill="currentColor" stroke="none" />
           <circle cx="27" cy="7" r="1.4" fill="currentColor" stroke="none" />
         </svg>
-      </div>
-      <div class="ft-cats" aria-hidden="true">
-        <img class="ft-cat ft-cat-1" src="files/gato-1.png" alt="" loading="lazy">
-        <img class="ft-cat ft-cat-2" src="files/gato-2.png" alt="" loading="lazy">
-        <img class="ft-cat ft-cat-3" src="files/gato-3.png" alt="" loading="lazy">
       </div>
     </footer>
   </div><!-- /page-home -->
