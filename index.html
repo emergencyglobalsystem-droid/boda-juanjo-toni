@@ -933,9 +933,11 @@
     .ft-cats--light {
       position: absolute;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      margin: 0;
+      left: 0;
+      right: 0;
+      max-width: none;
+      width: 100%;
+      padding: 0 8%;
     }
 
     .ft-cats--light .ft-cat-2 {
@@ -951,13 +953,13 @@
     }
 
     .ft-cat-1 {
-      left: 4%;
+      left: 0;
       height: 58px;
       transform: rotate(-8deg) scaleX(-1);
     }
 
     .ft-cat-2 {
-      right: 6%;
+      right: 0;
       height: 46px;
       bottom: -14px;
       opacity: 0.85;
