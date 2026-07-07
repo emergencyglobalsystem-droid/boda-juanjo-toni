@@ -2282,15 +2282,14 @@
       document.getElementById('song-search-input').value = '';
 
       try {
-        const artAndPreview = (artwork || '') + (previewUrl ? '|' + previewUrl : '');
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'addSong', title, artist, artworkPreview: artAndPreview }),
+          body: JSON.stringify({ action: 'addSong', title, artist, artwork: artwork || '', preview: previewUrl || '' }),
         });
         const data = await res.json();
         if (data.success) {
-          SONGS.push({ id: data.id, title, artist, votes: 0, artworkPreview: artAndPreview });
+          SONGS.push({ id: data.id, title, artist, votes: 0, artwork: artwork || '', preview: previewUrl || '' });
           renderSongs();
         }
       } catch (e) { console.error(e); }
@@ -2311,9 +2310,8 @@
         return;
       }
       document.getElementById('song-list').innerHTML = sorted.map((s, i) => {
-        const ap = (s.artworkPreview || '').split('|');
-        const artwork = ap[0] || '';
-        const preview = ap[1] || '';
+        const artwork = s.artwork || '';
+        const preview = s.preview || '';
         const artHtml = artwork
           ? `<img class="song-art" src="${escapeHtml(artwork)}" alt="">`
           : `<div class="song-art-placeholder">♪</div>`;
@@ -2374,8 +2372,13 @@
       document.getElementById('admin-tbody').innerHTML =
         '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);font-style:italic;">Cargando datos…</td></tr>';
       try {
-        const res = await fetch(API_URL + "?action=getAdmin&pass=" + ADMIN_PASS_LOCAL + "&t=" + Date.now());
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getAdmin', pass: ADMIN_PASS_LOCAL }),
+        });
         ADMIN_DATA = await res.json();
+        if (!Array.isArray(ADMIN_DATA)) throw new Error('unauthorized');
         renderAdmin(adminFilter);
       } catch (e) {
         document.getElementById('admin-tbody').innerHTML =
