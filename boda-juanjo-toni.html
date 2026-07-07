@@ -445,6 +445,35 @@
       margin-top: 10px;
     }
 
+    /* Dancing Script no incluye el glifo "ō" (macrón); usamos la serif itálica del sitio
+       para ese título en concreto y evitar el glifo roto, manteniendo el peso visual. */
+    .sec-title--serif {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(30px, 5vw, 46px);
+    }
+
+    /* Algunas fuentes/plataformas no incluyen el glifo precompuesto "ō": dibujamos el
+       macrón a mano sobre una "o" normal para que nunca aparezca un carácter roto. */
+    .macron-o {
+      position: relative;
+      display: inline-block;
+      line-height: 1;
+      vertical-align: baseline;
+    }
+
+    .macron-o::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0.02em;
+      transform: translateX(-50%);
+      width: 0.66em;
+      height: 0.07em;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
     .divider {
       display: flex;
       align-items: center;
@@ -1959,7 +1988,7 @@
       <div class="wrap">
         <div class="sec-head reveal">
           <div class="eyebrow">Un detalle, si quieres</div>
-          <h2 class="sec-title">Arigatou por adelantado</h2>
+          <h2 class="sec-title sec-title--serif">Arigat<span class="macron-o">o</span> por adelantado</h2>
           <div class="divider">
             <span></span>
             <span class="leaf-dot"><svg viewBox="0 0 26 26">
