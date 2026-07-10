@@ -1487,6 +1487,36 @@
       background: var(--green-pale);
     }
 
+    /* ────────── CANDADO DE ENTRADA ────────── */
+    #site-gate {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--cream);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    body.site-locked #site-gate {
+      display: flex;
+    }
+
+    body.site-locked nav,
+    body.site-locked .page {
+      display: none !important;
+    }
+
+    .site-gate-card {
+      text-align: center;
+      width: 100%;
+    }
+
+    .site-gate-card .pass-row {
+      justify-content: center;
+    }
+
     /* ────────── ADMIN ────────── */
     .admin-gate-card {
       background: var(--white);
@@ -1807,7 +1837,23 @@
   </style>
 </head>
 
-<body>
+<body class="site-locked">
+
+  <!-- ────────── CANDADO DE ENTRADA ────────── -->
+  <div id="site-gate">
+    <div class="admin-gate-card site-gate-card">
+      <div class="script" style="font-size:32px;color:var(--brand-deep);margin-bottom:6px;">J&amp;T</div>
+      <div class="page-heading" style="margin-bottom:4px;">Nos casamos</div>
+      <div class="page-sub" style="margin-bottom:18px;">Introduce la contraseña de la invitación para entrar.</div>
+      <div class="form-label">Contraseña</div>
+      <div class="pass-row">
+        <input type="password" id="site-gate-pass" placeholder="Contraseña" style="padding-left:16px;"
+          onkeydown="if(event.key==='Enter')checkSiteGate()" autofocus>
+        <button class="add-btn" onclick="checkSiteGate()">Entrar</button>
+      </div>
+      <div class="error-msg" id="site-gate-error">Contraseña incorrecta.</div>
+    </div>
+  </div>
 
   <!-- ────────── NAV ────────── -->
   <nav id="nav" class="always-solid">
@@ -2183,6 +2229,23 @@
     // ── CONFIGURACIÓN ──
     const API_URL = "https://script.google.com/macros/s/AKfycbwyJU-oB4Z8fOHS_6MHYHv7qW7lW0TYyy1JQAH4dDSasBZTJ8tWy6uXWsVJ3j3J5z7r/exec";
     const ADMIN_PASS_LOCAL = "boda2026";
+    const SITE_GATE_PASS = "laboda2026";
+    const SITE_GATE_KEY = "lb_gate_ok";
+
+    // ── CANDADO DE ENTRADA ──
+    function checkSiteGate() {
+      const pass = document.getElementById('site-gate-pass').value;
+      if (pass !== SITE_GATE_PASS) {
+        document.getElementById('site-gate-error').style.display = 'block';
+        return;
+      }
+      localStorage.setItem(SITE_GATE_KEY, '1');
+      document.body.classList.remove('site-locked');
+    }
+
+    if (localStorage.getItem(SITE_GATE_KEY) === '1') {
+      document.body.classList.remove('site-locked');
+    }
 
     let GUESTS = [];
     let SONGS = [];
@@ -2276,7 +2339,7 @@
 
       window.scrollTo({ top: 0, behavior: 'instant' });
 
-      if (p === 'rsvp') { loadGuests(); showSearch(); }
+      if (p === 'rsvp') { showSearch(); }
       if (p === 'music') loadSongs();
     }
 
@@ -2310,17 +2373,9 @@
     document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
 
     // ── GUESTS ──
-    async function loadGuests() {
-      const listEl = document.getElementById('guest-list');
-      listEl.innerHTML = '<div class="no-results">Cargando invitados…</div>';
-      try {
-        const res = await fetch(API_URL + "?action=getGuests&t=" + Date.now());
-        GUESTS = await res.json();
-        renderGuests(GUESTS);
-      } catch (err) {
-        listEl.innerHTML = '<div class="no-results" style="color:#b83c20;">Error al cargar la lista. Inténtalo de nuevo.</div>';
-      }
-    }
+    // Por privacidad, el listado completo de invitados nunca se descarga al navegador:
+    // el servidor solo devuelve las coincidencias de lo que se busca (mínimo 3 letras).
+    let searchDebounceTimer = null;
 
     function renderGuests(list) {
       const el = document.getElementById('guest-list');
@@ -2339,8 +2394,24 @@
     }
 
     function filterGuests() {
-      const q = document.getElementById('guest-search').value.toLowerCase();
-      renderGuests(q ? GUESTS.filter(g => g.name.toLowerCase().includes(q)) : GUESTS);
+      const q = document.getElementById('guest-search').value.trim();
+      clearTimeout(searchDebounceTimer);
+      const el = document.getElementById('guest-list');
+      if (q.length < 3) {
+        GUESTS = [];
+        el.innerHTML = '<div class="no-results">Escribe al menos 3 letras de tu nombre para buscar…</div>';
+        return;
+      }
+      el.innerHTML = '<div class="no-results">Buscando…</div>';
+      searchDebounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(API_URL + "?action=searchGuests&q=" + encodeURIComponent(q) + "&t=" + Date.now());
+          GUESTS = await res.json();
+          renderGuests(GUESTS);
+        } catch (err) {
+          el.innerHTML = '<div class="no-results" style="color:#b83c20;">Error al buscar. Inténtalo de nuevo.</div>';
+        }
+      }, 350);
     }
 
     let selGuest = null;
@@ -2466,7 +2537,8 @@
       document.getElementById('rsvp-form').style.display = 'none';
       document.getElementById('rsvp-success').style.display = 'none';
       document.getElementById('guest-search').value = '';
-      renderGuests(GUESTS);
+      GUESTS = [];
+      document.getElementById('guest-list').innerHTML = '<div class="no-results">Escribe al menos 3 letras de tu nombre para buscar…</div>';
     }
 
     // ── MUSIC / iTUNES ──
