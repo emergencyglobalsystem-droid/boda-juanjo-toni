@@ -2424,6 +2424,20 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
 
+    // ── EASTER EGG ──
+    (function () {
+      const target = 'rickroll';
+      let buffer = '';
+      document.addEventListener('keydown', (e) => {
+        if (e.key.length !== 1) return;
+        buffer = (buffer + e.key.toLowerCase()).slice(-target.length);
+        if (buffer === target) {
+          buffer = '';
+          window.open('https://www.youtube.com/watch?v=Aq5WXmQQooo', '_blank');
+        }
+      });
+    })();
+
     // ── GUESTS ──
     // Por privacidad, el listado completo de invitados nunca se descarga al navegador:
     // el servidor solo devuelve las coincidencias de lo que se busca (mínimo 3 letras).
