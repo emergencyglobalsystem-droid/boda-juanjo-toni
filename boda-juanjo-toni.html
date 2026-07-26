@@ -2567,7 +2567,7 @@
       resultsEl.style.display = 'block';
       resultsEl.innerHTML = '<div class="no-results" style="padding:20px;">Buscando…</div>';
       try {
-        const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=6`;
+        const url = API_URL + "?action=searchItunes&term=" + encodeURIComponent(q) + "&t=" + Date.now();
         const res = await fetch(url);
         const data = await res.json();
         if (mySeq !== searchSeq) return;
