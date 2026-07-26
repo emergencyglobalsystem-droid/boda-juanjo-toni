@@ -2556,9 +2556,13 @@
       searchTimeout = setTimeout(searchItunes, 500);
     }
 
+    let searchSeq = 0;
+
     async function searchItunes() {
+      clearTimeout(searchTimeout);
       const q = document.getElementById('song-search-input').value.trim();
       if (!q) return;
+      const mySeq = ++searchSeq;
       const resultsEl = document.getElementById('itunes-results');
       resultsEl.style.display = 'block';
       resultsEl.innerHTML = '<div class="no-results" style="padding:20px;">Buscando…</div>';
@@ -2566,6 +2570,7 @@
         const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=6`;
         const res = await fetch(url);
         const data = await res.json();
+        if (mySeq !== searchSeq) return;
         if (!data.results || !data.results.length) {
           resultsEl.innerHTML = '<div class="no-results" style="padding:20px;">No se encontraron resultados.</div>';
           return;
@@ -2598,6 +2603,7 @@
           });
         });
       } catch (err) {
+        if (mySeq !== searchSeq) return;
         resultsEl.innerHTML = '<div class="no-results" style="padding:20px;color:#b83c20;">Error al buscar. Inténtalo de nuevo.</div>';
       }
     }
@@ -2630,8 +2636,6 @@
 
       // Stop preview
       if (currentAudio && !currentAudio.paused) { currentAudio.pause(); currentAudio = null; }
-      document.getElementById('itunes-results').style.display = 'none';
-      document.getElementById('song-search-input').value = '';
 
       try {
         const res = await fetch(API_URL, {
@@ -2643,8 +2647,15 @@
         if (data.success) {
           SONGS.push({ id: data.id, title, artist, votes: 0, artwork: artwork || '', preview: previewUrl || '' });
           renderSongs();
+          document.getElementById('itunes-results').style.display = 'none';
+          document.getElementById('song-search-input').value = '';
+        } else {
+          alert('No se ha podido añadir la canción. Inténtalo de nuevo.');
         }
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error(e);
+        alert('No se ha podido añadir la canción. Comprueba tu conexión e inténtalo de nuevo.');
+      }
     }
 
     async function loadSongs() {
