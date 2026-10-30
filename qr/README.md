@@ -1,5 +1,7 @@
 # QR de misiones
 
+Las tarjetas con diseño listas para imprimir están en `imprenta/` (ver su README).
+
 Los textos de cada misión se editan en `q/misiones.js`. Los QR no cambian aunque cambie el texto.
 
 | Misión | Código | URL | Ficheros |
