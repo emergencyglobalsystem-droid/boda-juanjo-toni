@@ -14,17 +14,18 @@ Script de Google Apps Script que guarda las fotos y vídeos de los invitados en 
    - En `Código.gs`, borrar todo y pegar el contenido de `Code.gs`.
    - En `appsscript.json`, borrar todo y pegar el contenido de `appsscript.json`.
    - Guardar (icono del disquete).
-4. Arriba, en el desplegable de funciones, elegir **setup** y pulsar **▶ Ejecutar**.
+4. Activar la API de Drive: en la barra de la izquierda, junto a **Servicios**, pulsar **+**, elegir **Drive API** (versión v3) y **Añadir**. Esperar un minuto.
+5. Arriba, en el desplegable de funciones, elegir **setup** y pulsar **▶ Ejecutar**.
    - Pedirá permisos: **Revisar permisos** → elegir la cuenta de la boda.
    - Saldrá "Google no ha verificado esta aplicación". Es normal: el script es vuestro. Pulsar **Configuración avanzada** → **Ir a Fotos boda (no seguro)** → **Permitir**.
    - Los permisos son solo dos: archivos de Drive *que cree esta aplicación* (no ve nada más del Drive) y conectarse a servicios externos (para hablar con Drive).
-5. Abajo saldrá el **Registro de ejecución** con el enlace de la carpeta de fotos, el espacio libre y la **clave de administración**. Guardar esa clave.
-6. Arriba a la derecha: **Implementar → Nueva implementación** → en el engranaje elegir **Aplicación web**:
+6. Abajo saldrá el **Registro de ejecución** con el enlace de la carpeta de fotos, el espacio libre y la **clave de administración**. Guardar esa clave.
+7. Arriba a la derecha: **Implementar → Nueva implementación** → en el engranaje elegir **Aplicación web**:
    - Descripción: `v1`
    - Ejecutar como: **Yo**
    - Quién tiene acceso: **Cualquier usuario**
    - **Implementar** y copiar la **URL de la aplicación web** (termina en `/exec`).
-7. Pasar esa URL (y, si se quiere, la clave de administración) para conectarla con la web.
+8. Pasar esa URL (y, si se quiere, la clave de administración) para conectarla con la web.
 
 Si más adelante cambia el código: **Implementar → Gestionar implementaciones → ✏️ → Versión: Nueva versión → Implementar**. Así la URL no cambia.
 
