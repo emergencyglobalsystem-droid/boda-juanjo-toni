@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Comparte el momento · Toñi &amp; Juanjo</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#F2F2F2">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #F2F2F2;
+      --paper: #FFFFFF;
+      --ink: #0D0D0D;
+      --muted: #5c5c5c;
+      --faint: #9a9a9a;
+      --sand: #F2B366;
+      --brand: #F29422;
+      --brand-deep: #9d6016;
+      --brand-pale: #FCEBD2;
+      --green: #5a8a50;
+      --red: #b03a2e;
+      --line: rgba(13, 13, 13, 0.10);
+      --shadow: 0 18px 50px -28px rgba(13, 13, 13, 0.35);
+      --radius: 16px;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --script: 'Dancing Script', cursive;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--cream); color: var(--ink); font-family: var(--serif); font-size: 18px; line-height: 1.55; min-height: 100vh; }
+    button { font: inherit; color: inherit; }
+
+    /* ── Candado (mismo que la web principal) ── */
+    body.site-locked { overflow: hidden; }
+    #site-gate { display: none; position: fixed; inset: 0; z-index: 2000; background: var(--cream); align-items: center; justify-content: center; padding: 24px; }
+    body.site-locked #site-gate { display: flex; }
+    .gate-card { width: 100%; max-width: 420px; background: var(--paper); border: 1px solid var(--sand); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px 28px; text-align: center; }
+    .gate-card .mono { font-family: var(--script); font-weight: 600; font-size: 32px; color: var(--brand-deep); margin-bottom: 6px; }
+    .page-heading { font-family: var(--script); font-size: 40px; font-weight: 600; line-height: 1.1; margin-bottom: 4px; }
+    .page-sub { font-style: italic; color: var(--muted); margin-bottom: 18px; }
+    .form-label { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-deep); font-weight: 600; margin-bottom: 8px; }
+    .pass-row { display: flex; gap: 10px; }
+    .field {
+      flex: 1; min-width: 0; width: 100%;
+      font-family: var(--serif); font-size: 18px; padding: 12px 18px;
+      border: 1px solid var(--sand); border-radius: 999px; background: var(--paper); color: var(--ink); outline: none;
+    }
+    .field:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(242, 148, 34, 0.2); }
+    .add-btn { font-family: var(--serif); font-size: 17px; font-weight: 600; padding: 12px 22px; border: none; border-radius: 999px; background: var(--brand-pale); color: var(--ink); cursor: pointer; }
+    .add-btn:hover { background: var(--sand); }
+    .error-msg { display: none; color: var(--red); margin-top: 10px; font-style: italic; }
+    @media (max-width: 480px) { .pass-row { flex-direction: column; } }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+    }
+    nav a.logo { font-family: var(--script); font-size: 26px; font-weight: 600; color: var(--brand-deep); text-decoration: none; }
+    nav .links { display: flex; gap: 18px; }
+    nav .links a { font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+    nav .links a:hover { color: var(--brand-deep); }
+
+    /* ── Cabecera ── */
+    .hero { padding: 80px 20px 6px; text-align: center; background: linear-gradient(180deg, #faf4ec 0%, var(--cream) 100%); }
+    .eyebrow { font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brand-deep); font-weight: 600; }
+    .hero-illu img { width: min(62vw, 260px); height: auto; display: block; margin: 8px auto 0; }
+    .hero h1 { font-family: var(--script); font-weight: 700; font-size: clamp(40px, 11vw, 58px); line-height: 1.05; margin: 6px 0 4px; }
+    .hero p { color: var(--muted); font-style: italic; max-width: 460px; margin: 0 auto 6px; }
+
+    .wrap { max-width: 620px; margin: 0 auto; padding: 10px 16px 40px; }
+    .card { background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 22px; }
+
+    /* ── Subida ── */
+    .guest-row { margin-bottom: 18px; }
+    .guest-row .hint { font-size: 15px; color: var(--faint); font-style: italic; margin: 6px 4px 0; }
+    .pick {
+      display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%;
+      padding: 26px 16px; border: 2px dashed var(--sand); border-radius: 18px; background: #fffaf3;
+      cursor: pointer; text-align: center; transition: background .15s ease, border-color .15s ease;
+    }
+    .pick:hover, .pick.drag { background: var(--brand-pale); border-color: var(--brand); }
+    .pick .ico { font-size: 40px; line-height: 1; }
+    .pick b { font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin-top: 6px; }
+    .pick span { font-size: 15px; color: var(--muted); font-style: italic; }
+    #file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+    .summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 18px 2px 8px; font-size: 16px; color: var(--muted); }
+    .summary b { color: var(--ink); }
+    .bar { height: 6px; background: var(--brand-pale); border-radius: 999px; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--brand); border-radius: 999px; transition: width .3s ease; }
+    .bar.done i { background: var(--green); }
+
+    .queue { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+    .item { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; }
+    .thumb { width: 56px; height: 56px; border-radius: 10px; background: var(--brand-pale) center / cover no-repeat; display: flex; align-items: center; justify-content: center; font-size: 22px; overflow: hidden; }
+    .thumb video { width: 100%; height: 100%; object-fit: cover; }
+    .meta { min-width: 0; }
+    .meta .name { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta .state { font-size: 14px; color: var(--faint); font-style: italic; }
+    .meta .bar { margin-top: 5px; height: 4px; }
+    .item.ok .state { color: var(--green); font-style: normal; }
+    .item.err .state { color: var(--red); font-style: normal; }
+    .item .act { font-size: 20px; width: 32px; text-align: center; }
+    .retry { border: none; background: var(--brand-pale); border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    .notice { margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: #fff4e6; color: var(--brand-deep); font-size: 16px; text-align: center; }
+    .thanks { margin-top: 16px; text-align: center; }
+    .thanks .big { font-family: var(--script); font-size: 34px; color: var(--brand-deep); line-height: 1.1; }
+    .thanks p { margin: 4px 0 0; color: var(--muted); }
+
+    /* ── Galería ── */
+    .gal-head { text-align: center; margin: 46px 0 16px; }
+    .gal-head h2 { font-family: var(--script); font-weight: 700; font-size: 44px; line-height: 1.1; margin: 6px 0 2px; }
+    .gal-head p { margin: 0; color: var(--faint); font-style: italic; font-size: 16px; }
+    .gallery-wrap { max-width: 1100px; margin: 0 auto; padding: 0 10px 60px; }
+    .grid { columns: 2 150px; column-gap: 8px; }
+    @media (min-width: 700px) { .grid { columns: 4 200px; column-gap: 10px; } }
+    .tile {
+      position: relative; display: block; width: 100%; margin: 0 0 8px; padding: 0; border: none; border-radius: 12px; overflow: hidden;
+      background: var(--brand-pale); cursor: pointer; break-inside: avoid;
+    }
+    .tile img { display: block; width: 100%; height: auto; opacity: 0; transition: opacity .4s ease; }
+    .tile img.loaded { opacity: 1; }
+    .tile.fresh { animation: pop .6s cubic-bezier(.2, 1.4, .4, 1); }
+    @keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+    .tile .play {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .35));
+    }
+    .tile .play::before { content: '▶'; width: 46px; height: 46px; border-radius: 50%; background: rgba(255, 255, 255, .9); color: var(--brand-deep); display: flex; align-items: center; justify-content: center; font-size: 18px; padding-left: 4px; }
+    .tile .who { position: absolute; left: 8px; bottom: 6px; right: 8px; color: #fff; font-size: 13px; text-align: left; text-shadow: 0 1px 3px rgba(0, 0, 0, .7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .empty { text-align: center; color: var(--faint); font-style: italic; padding: 30px 10px; }
+    .new-pill {
+      position: sticky; top: 72px; z-index: 50; display: block; margin: 0 auto 12px; border: none; border-radius: 999px;
+      background: var(--brand); color: #fff; padding: 8px 18px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: var(--shadow);
+    }
+
+    /* ── Visor ── */
+    #viewer { position: fixed; inset: 0; z-index: 1500; background: rgba(10, 8, 6, .94); display: flex; flex-direction: column; }
+    .v-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; color: #fff; padding-top: max(10px, env(safe-area-inset-top)); }
+    .v-top .who { font-size: 16px; opacity: .85; }
+    .v-btn { border: none; background: rgba(255, 255, 255, .12); color: #fff; width: 42px; height: 42px; border-radius: 50%; font-size: 22px; cursor: pointer; }
+    .v-stage { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 0 8px; }
+    .v-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+    .v-stage iframe { width: min(100%, 900px); height: min(100%, 70vh); border: 0; border-radius: 8px; background: #000; }
+    .v-nav { position: absolute; top: 50%; transform: translateY(-50%); }
+    .v-prev { left: 8px; } .v-next { right: 8px; }
+    .v-bottom { display: flex; justify-content: center; gap: 12px; padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+    .v-bottom a { color: #fff; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; opacity: .85; }
+
+    footer { text-align: center; padding: 0 20px 40px; color: var(--faint); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; }
+  </style>
+</head>
+
+<body class="site-locked">
+  <div id="site-gate">
+    <div class="gate-card">
+      <div class="mono">T&amp;J</div>
+      <div class="page-heading">Nos casamos</div>
+      <div class="page-sub">Introduce la contraseña de la invitación para entrar.</div>
+      <div class="form-label">Contraseña</div>
+      <div class="pass-row">
+        <input class="field" type="password" id="site-gate-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkSiteGate()">
+        <button class="add-btn" onclick="checkSiteGate()">Entrar</button>
+      </div>
+      <div class="error-msg" id="site-gate-error">Contraseña incorrecta.</div>
+    </div>
+  </div>
+
+  <nav>
+    <a class="logo" href="/">T&amp;J</a>
+    <div class="links"><a href="#galeria">Galería</a><a href="/">La boda</a></div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-illu"><img src="/hero-toni-juanjo-v2.webp" alt="Toñi y Juanjo"></div>
+    <div class="eyebrow">Comparte el momento</div>
+    <h1>Súbenos tus fotos</h1>
+    <p>Fotos y vídeos, sin apps y en su calidad original. Van directos al álbum de los novios.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="upload">
+      <div class="guest-row">
+        <div class="form-label">Tu nombre <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--faint)">(opcional)</span></div>
+        <input class="field" id="guest" maxlength="40" placeholder="Así sabremos de quién son" autocomplete="name">
+      </div>
+
+      <label class="pick" id="pick">
+        <input type="file" id="file-input" accept="image/*,video/*" multiple>
+        <div class="ico">📸</div>
+        <b>Elegir fotos y vídeos</b>
+        <span>Puedes elegir varias a la vez</span>
+      </label>
+
+      <div id="progress" hidden>
+        <div class="summary"><span id="sum-text"></span><span id="sum-size"></span></div>
+        <div class="bar" id="sum-bar"><i></i></div>
+        <ul class="queue" id="queue"></ul>
+        <div class="notice" id="keep-open" hidden>No cierres esta página hasta que termine 🙏</div>
+        <div class="thanks" id="thanks" hidden>
+          <div class="big">¡Gracias!</div>
+          <p id="thanks-text"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="gallery-wrap" id="galeria">
+    <div class="gal-head">
+      <div class="eyebrow">En directo</div>
+      <h2>La boda vista por vosotros</h2>
+      <p>Las fotos aparecen aquí unos minutos después de subirlas.</p>
+    </div>
+    <button class="new-pill" id="new-pill" hidden></button>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>Todavía no hay fotos. ¡Sé el primero!</div>
+  </section>
+
+  <footer>7 · Noviembre · 2026 — Lorquí, Murcia</footer>
+
+  <div id="viewer" hidden>
+    <div class="v-top"><span class="who" id="v-who"></span><button class="v-btn" id="v-close" aria-label="Cerrar">✕</button></div>
+    <div class="v-stage" id="v-stage">
+      <button class="v-btn v-nav v-prev" id="v-prev" aria-label="Anterior">‹</button>
+      <button class="v-btn v-nav v-next" id="v-next" aria-label="Siguiente">›</button>
+    </div>
+    <div class="v-bottom"><a id="v-download" href="#" target="_blank" rel="noopener">Descargar</a></div>
+  </div>
+
+  <script>
+    // ── Configuración ──
+    const API = 'https://script.google.com/macros/s/AKfycbyHycqj-RuN1L78vuFPRDBovx8AgO3zXeBlzF0gPWtNCjV1QzcQfzqreBtsUyEGiSKtwA/exec';
+    const KEY = 'laboda2026';
+    const PARALLEL = 2;
+    const GALLERY_REFRESH_MS = 45000;
+    const thumbUrl = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
+    const thumbUrl2 = (id, w) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
+    const videoUrl = id => `https://drive.google.com/file/d/${id}/preview`;
+    const downloadUrl = id => `https://drive.google.com/uc?export=download&id=${id}`;
+
+    // ── Candado: misma contraseña y clave que la web. El QR de las mesas entra directo (#entrar). ──
+    const SITE_GATE_PASS = 'laboda2026';
+    const SITE_GATE_KEY = 'lb_gate_ok';
+    const store = {
+      get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { } }
+    };
+    function unlock() { store.set(SITE_GATE_KEY, '1'); document.body.classList.remove('site-locked'); }
+    function checkSiteGate() {
+      if (document.getElementById('site-gate-pass').value !== SITE_GATE_PASS) {
+        document.getElementById('site-gate-error').style.display = 'block'; return;
+      }
+      unlock();
+    }
+    if (location.hash === '#entrar') { unlock(); history.replaceState(null, '', location.pathname); }
+    if (store.get(SITE_GATE_KEY) === '1') document.body.classList.remove('site-locked');
+
+    const $ = id => document.getElementById(id);
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    const fmtMB = b => (b / 1048576 < 10 ? (b / 1048576).toFixed(1) : Math.round(b / 1048576)) + ' MB';
+
+    // ── API del backend ──
+    async function api(body) {
+      const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ key: KEY, ...body }) });
+      return r.json();
+    }
+
+    // ── Subida reanudable por trozos ──
+    let mode = 'direct';   // 'direct' = del móvil a Drive; 'proxy' = a través del script (plan B)
+    const rangeEnd = h => { const m = h && h.match(/bytes=0-(\d+)/); return m ? Number(m[1]) + 1 : 0; };
+
+    function putDirect(url, blob, start, total, onProgress) {
+      return new Promise((resolve, reject) => {
+        const x = new XMLHttpRequest();
+        x.open('PUT', url);
+        x.timeout = 180000;
+        x.setRequestHeader('Content-Range', blob.size ? `bytes ${start}-${start + blob.size - 1}/${total}` : `bytes */${total}`);
+        x.upload.onprogress = e => onProgress && onProgress(e.loaded);
+        x.onload = () => {
+          if (x.status === 200 || x.status === 201) return resolve({ done: true });
+          if (x.status === 308) return resolve({ done: false, received: rangeEnd(x.getResponseHeader('Range')) });
+          if (x.status === 404 || x.status === 410) return reject(Object.assign(new Error('expired'), { fatal: 'expired' }));
+          reject(Object.assign(new Error('http ' + x.status), { status: x.status }));
+        };
+        x.onerror = () => reject(Object.assign(new Error('red'), { network: true }));
+        x.ontimeout = () => reject(Object.assign(new Error('timeout'), { network: true }));
+        x.send(blob.size ? blob : null);
+      });
+    }
+
+    const toBase64 = blob => new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(String(fr.result).split(',')[1] || '');
+      fr.onerror = () => rej(fr.error);
+      fr.readAsDataURL(blob);
+    });
+
+    async function putProxy(url, blob, start, total) {
+      const r = blob.size
+        ? await api({ action: 'chunk', uploadUrl: url, start, total, data: await toBase64(blob) })
+        : await api({ action: 'query', uploadUrl: url, total });
+      if (r.ok) return r;
+      if (r.error === 'expired') throw Object.assign(new Error('expired'), { fatal: 'expired' });
+      throw Object.assign(new Error(r.error || 'proxy'), { network: true });
+    }
+
+    async function uploadOne(item) {
+      const f = item.file;
+      const s = await api({ action: 'start', name: f.name, mimeType: f.type, size: f.size, guest: $('guest').value.trim(), origin: location.origin });
+      if (!s.ok) {
+        const msg = { type: 'No es una foto ni un vídeo', too_big: `Demasiado grande (máx. ${s.maxMb} MB)`, size: 'Archivo vacío' }[s.error];
+        throw Object.assign(new Error(s.error), { fatal: msg || 'No se ha podido empezar' });
+      }
+      const chunk = s.chunkSize || 8 * 1048576;
+      let offset = 0, fails = 0;
+      while (offset < f.size) {
+        const size = mode === 'proxy' ? Math.min(chunk, 4 * 1048576) : chunk;
+        const blob = f.slice(offset, Math.min(offset + size, f.size));
+        try {
+          const r = mode === 'direct'
+            ? await putDirect(s.uploadUrl, blob, offset, f.size, n => item.setProgress(offset + n))
+            : await putProxy(s.uploadUrl, blob, offset, f.size);
+          if (r.done) { item.setProgress(f.size); return; }
+          offset = r.received; fails = 0;
+          item.setProgress(offset);
+        } catch (err) {
+          if (err.fatal) throw err;
+          fails++;
+          // Si el primer trozo nunca llega a salir directo, pasamos al plan B para todo lo que quede
+          if (mode === 'direct' && offset === 0 && fails >= 2 && navigator.onLine !== false) { mode = 'proxy'; fails = 0; continue; }
+          if (fails > 8) throw Object.assign(err, { fatal: 'Sin conexión. Pulsa reintentar.' });
+          item.setState(navigator.onLine === false ? 'Sin cobertura, esperando…' : 'Reintentando…');
+          await sleep(Math.min(30000, 1500 * 2 ** (fails - 1)));
+          try {   // preguntar a Drive cuánto ha recibido para seguir desde ahí
+            const q = mode === 'direct' ? await putDirect(s.uploadUrl, new Blob([]), 0, f.size) : await putProxy(s.uploadUrl, new Blob([]), 0, f.size);
+            if (q.done) { item.setProgress(f.size); return; }
+            offset = q.received;
+          } catch (e2) { if (e2.fatal) throw e2; }
+        }
+      }
+    }
+
+    // ── Cola visible ──
+    const items = [];
+    let running = 0, wakeLock = null;
+
+    function addFiles(files) {
+      if (!files.length) return;
+      $('progress').hidden = false; $('thanks').hidden = true;
+      for (const file of files) {
+        const li = document.createElement('li');
+        li.className = 'item';
+        const isVideo = /^video\//.test(file.type) || /\.(mov|mp4|m4v|3gp|webm)$/i.test(file.name);
+        li.innerHTML = `<div class="thumb">${isVideo ? '🎬' : ''}</div><div class="meta"><div class="name"></div><div class="state">En cola</div><div class="bar"><i></i></div></div><div class="act"></div>`;
+        li.querySelector('.name').textContent = file.name;
+        if (!isVideo && /^image\/(jpeg|png|gif|webp)$/.test(file.type)) {
+          const url = URL.createObjectURL(file);
+          li.querySelector('.thumb').style.backgroundImage = `url("${url}")`;
+        }
+        $('queue').appendChild(li);
+        const item = {
+          file, li, sent: 0, status: 'queued',
+          setProgress(n) { this.sent = n; li.querySelector('.bar i').style.width = (100 * n / file.size).toFixed(1) + '%'; if (this.status === 'up') this.setState(`Subiendo… ${Math.floor(100 * n / file.size)}%`); renderSummary(); },
+          setState(t) { li.querySelector('.state').textContent = t; }
+        };
+        items.push(item);
+      }
+      renderSummary();
+      pump();
+    }
+
+    async function pump() {
+      while (running < PARALLEL) {
+        const next = items.find(i => i.status === 'queued');
+        if (!next) break;
+        running++; next.status = 'up'; next.setState('Subiendo…');
+        keepAwake(true);
+        uploadOne(next).then(() => {
+          next.status = 'ok'; next.li.classList.add('ok'); next.li.classList.remove('err');
+          next.setState('Subida ✓'); next.li.querySelector('.act').textContent = '✅';
+        }).catch(err => {
+          next.status = 'err'; next.li.classList.add('err');
+          next.setState(err.fatal === 'expired' ? 'Se cortó demasiado tiempo' : (err.fatal || 'Error'));
+          if (!/^(No es|Demasiado|Archivo vacío)/.test(err.fatal || '')) {
+            const b = document.createElement('button'); b.className = 'retry'; b.textContent = 'Reintentar';
+            b.onclick = () => { next.status = 'queued'; next.li.classList.remove('err'); next.setProgress(0); next.setState('En cola'); next.li.querySelector('.act').textContent = ''; pump(); };
+            next.li.querySelector('.act').replaceChildren(b);
+          } else next.li.querySelector('.act').textContent = '⚠️';
+        }).finally(() => { running--; renderSummary(); pump(); });
+      }
+      if (!running) keepAwake(false);
+      renderSummary();
+    }
+
+    function renderSummary() {
+      const total = items.length, ok = items.filter(i => i.status === 'ok').length, err = items.filter(i => i.status === 'err').length;
+      const bytes = items.reduce((a, i) => a + i.file.size, 0), sent = items.reduce((a, i) => a + (i.status === 'ok' ? i.file.size : i.sent), 0);
+      const busy = items.some(i => i.status === 'up' || i.status === 'queued');
+      $('sum-text').innerHTML = `<b>${ok}</b> de ${total} subidas` + (err ? ` · ${err} con error` : '');
+      $('sum-size').textContent = `${fmtMB(sent)} / ${fmtMB(bytes)}`;
+      $('sum-bar').querySelector('i').style.width = (bytes ? 100 * sent / bytes : 0) + '%';
+      $('sum-bar').classList.toggle('done', !busy && !err && ok === total);
+      $('keep-open').hidden = !busy;
+      $('thanks').hidden = busy || ok === 0;
+      $('thanks-text').textContent = `${ok === 1 ? 'Tu archivo ya está' : 'Tus ' + ok + ' archivos ya están'} en el álbum de los novios. Aparecerán en la galería en unos minutos.`;
+    }
+
+    async function keepAwake(on) {
+      try {
+        if (on && !wakeLock && 'wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+        if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+      } catch (e) { }
+    }
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && running) keepAwake(true); });
+    window.addEventListener('beforeunload', e => { if (items.some(i => i.status === 'up' || i.status === 'queued')) { e.preventDefault(); e.returnValue = ''; } });
+
+    // Nombre recordado
+    $('guest').value = store.get('lb_guest') || '';
+    $('guest').addEventListener('change', () => store.set('lb_guest', $('guest').value.trim()));
+
+    $('file-input').addEventListener('change', e => { addFiles([...e.target.files]); e.target.value = ''; });
+    const pick = $('pick');
+    ['dragenter', 'dragover'].forEach(ev => pick.addEventListener(ev, e => { e.preventDefault(); pick.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(ev => pick.addEventListener(ev, e => { e.preventDefault(); pick.classList.remove('drag'); }));
+    pick.addEventListener('drop', e => addFiles([...e.dataTransfer.files]));
+
+    // ── Galería en directo (con diferido) ──
+    let gallery = [], pendingNew = [];
+    const known = new Set();
+
+    function tile(it, fresh) {
+      const b = document.createElement('button');
+      b.className = 'tile' + (fresh ? ' fresh' : '');
+      b.setAttribute('aria-label', it.type === 'video' ? 'Ver vídeo' : 'Ver foto');
+      const img = document.createElement('img');
+      img.loading = 'lazy'; img.alt = '';
+      if (it.w && it.h) { img.width = it.w; img.height = it.h; }
+      img.onload = () => img.classList.add('loaded');
+      img.onerror = () => { if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = thumbUrl2(it.id, 600); } else b.style.display = 'none'; };
+      img.src = thumbUrl(it.id, 600);
+      b.appendChild(img);
+      if (it.type === 'video') b.insertAdjacentHTML('beforeend', '<span class="play"></span>');
+      if (it.guest) { const w = document.createElement('span'); w.className = 'who'; w.textContent = it.guest; b.appendChild(w); }
+      b.onclick = () => openViewer(gallery.findIndex(x => x.id === it.id));
+      return b;
+    }
+
+    function showItems(list, fresh) {
+      const grid = $('grid');
+      const frag = document.createDocumentFragment();
+      list.forEach(it => frag.appendChild(tile(it, fresh)));
+      grid.prepend(frag);
+      $('empty').hidden = gallery.length > 0;
+    }
+
+    async function loadGallery() {
+      try {
+        const r = await (await fetch(`${API}?action=gallery&key=${KEY}&t=${Date.now()}`)).json();
+        if (!r.ok || !r.enabled) { $('galeria').hidden = !(r.ok && r.enabled); return; }
+        const fresh = r.items.filter(it => !known.has(it.id));
+        fresh.forEach(it => known.add(it.id));
+        const gone = new Set(gallery.map(x => x.id).filter(id => !r.items.some(it => it.id === id)));
+        if (gone.size) {   // retiradas por los novios
+          gallery = gallery.filter(x => !gone.has(x.id));
+          $('grid').replaceChildren(); showItems(gallery, false);
+        }
+        if (!gallery.length) { gallery = r.items; showItems(gallery, false); return; }
+        if (fresh.length) {
+          const nearTop = window.scrollY < $('galeria').offsetTop + 200;
+          if (nearTop) { gallery = fresh.concat(gallery); showItems(fresh, true); }
+          else { pendingNew = fresh.concat(pendingNew); $('new-pill').textContent = `↑ ${pendingNew.length} nueva${pendingNew.length > 1 ? 's' : ''}`; $('new-pill').hidden = false; }
+        }
+        $('empty').hidden = gallery.length > 0;
+      } catch (e) { /* sin conexión: se reintenta en el siguiente ciclo */ }
+    }
+    $('new-pill').onclick = () => {
+      gallery = pendingNew.concat(gallery); showItems(pendingNew, true); pendingNew = [];
+      $('new-pill').hidden = true; $('galeria').scrollIntoView({ behavior: 'smooth' });
+    };
+    loadGallery();
+    setInterval(() => { if (document.visibilityState === 'visible') loadGallery(); }, GALLERY_REFRESH_MS);
+
+    // ── Visor ──
+    let vIndex = -1;
+    function openViewer(i) {
+      if (i < 0) return;
+      vIndex = i; renderViewer(); $('viewer').hidden = false; document.body.style.overflow = 'hidden';
+    }
+    function closeViewer() { $('viewer').hidden = true; document.body.style.overflow = ''; $('v-stage').querySelectorAll('img,iframe').forEach(n => n.remove()); }
+    function renderViewer() {
+      const it = gallery[vIndex]; if (!it) return;
+      const stage = $('v-stage');
+      stage.querySelectorAll('img,iframe').forEach(n => n.remove());
+      let el;
+      if (it.type === 'video') { el = document.createElement('iframe'); el.src = videoUrl(it.id); el.allow = 'autoplay; fullscreen'; el.allowFullscreen = true; }
+      else { el = document.createElement('img'); el.src = thumbUrl(it.id, 1600); el.alt = ''; el.onerror = () => { if (!el.dataset.alt) { el.dataset.alt = '1'; el.src = thumbUrl2(it.id, 1600); } }; }
+      stage.prepend(el);
+      $('v-who').textContent = it.guest ? 'De ' + it.guest : '';
+      $('v-download').href = downloadUrl(it.id);
+      $('v-prev').hidden = vIndex <= 0; $('v-next').hidden = vIndex >= gallery.length - 1;
+    }
+    $('v-close').onclick = closeViewer;
+    $('v-prev').onclick = () => { if (vIndex > 0) { vIndex--; renderViewer(); } };
+    $('v-next').onclick = () => { if (vIndex < gallery.length - 1) { vIndex++; renderViewer(); } };
+    document.addEventListener('keydown', e => {
+      if ($('viewer').hidden) return;
+      if (e.key === 'Escape') closeViewer();
+      if (e.key === 'ArrowLeft') $('v-prev').click();
+      if (e.key === 'ArrowRight') $('v-next').click();
+    });
+    let sx = null;
+    $('v-stage').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+    $('v-stage').addEventListener('touchend', e => {
+      if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 50) (dx < 0 ? $('v-next') : $('v-prev')).click();
+    }, { passive: true });
+  </script>
+</body>
+
+</html>
