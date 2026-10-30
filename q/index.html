@@ -242,7 +242,7 @@
 
       <!-- Fase 3: misión -->
       <section class="phase" id="phase-mission">
-        <div class="mission-kicker">Tu misión</div>
+        <div class="mission-kicker" id="mission-code">Tu misión</div>
         <div class="mission-title" id="mission-title"></div>
         <div class="divider"><span></span><i></i><span></span></div>
         <div class="mission-text" id="mission-text"></div>
@@ -280,20 +280,45 @@
       if (localStorage.getItem(SITE_GATE_KEY) === '1') document.body.classList.remove('site-locked');
     } catch (e) { }
 
-    // ── Misión según el código del QR (?m=xxxx) ──
-    const code = (new URLSearchParams(location.search).get('m') || '').trim().toLowerCase();
-    const mission = (window.MISIONES || {})[code];
+    // ── Misión según la llave del QR (laboda.es/q/#llave) ──
+    // Las misiones están cifradas: solo la llave de cada QR abre la suya.
+    const secret = decodeURIComponent(location.hash.slice(1)).trim().toLowerCase();
+    const te = new TextEncoder();
+    const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+    let entry = null;
 
     function showPhase(id) {
       document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
 
-    if (!mission) showPhase('phase-notfound');
+    async function findEntry() {
+      if (!secret || !window.crypto || !crypto.subtle) return null;
+      const h = await crypto.subtle.digest('SHA-256', te.encode('laboda-id:' + secret));
+      const id = Array.from(new Uint8Array(h), b => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
+      return (window.MISIONES || {})[id] || null;
+    }
 
-    function revealMission() {
+    async function decrypt(e) {
+      const base = await crypto.subtle.importKey('raw', te.encode(secret), 'PBKDF2', false, ['deriveKey']);
+      const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: fromB64(e.s), iterations: window.MISIONES_ITER || 150000, hash: 'SHA-256' },
+        base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(e.i) }, key, fromB64(e.d));
+      return JSON.parse(new TextDecoder().decode(plain));
+    }
+
+    const ready = findEntry().then(e => { entry = e; if (!e) showPhase('phase-notfound'); })
+      .catch(() => showPhase('phase-notfound'));
+
+    async function revealMission() {
       showPhase('phase-decoding');
-      setTimeout(() => {
+      const wait = new Promise(r => setTimeout(r, 2300));
+      try {
+        await ready;
+        if (!entry) throw new Error('sin misión');
+        const [mission] = await Promise.all([decrypt(entry), wait]);
+        document.getElementById('mission-code').textContent = 'Expediente Nº ' + mission.codigo;
         document.getElementById('mission-title').textContent = mission.titulo;
         const text = document.getElementById('mission-text');
         text.textContent = '';
@@ -304,7 +329,10 @@
         });
         showPhase('phase-mission');
         selfDestruct();
-      }, 2300);
+      } catch (err) {
+        await wait;
+        showPhase('phase-notfound');
+      }
     }
 
     function selfDestruct() {
