@@ -121,6 +121,12 @@
     .thanks { margin-top: 16px; text-align: center; }
     .thanks .big { font-family: var(--script); font-size: 34px; color: var(--brand-deep); line-height: 1.1; }
     .thanks p { margin: 4px 0 0; color: var(--muted); }
+    .thanks-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; }
+    .act-btn { font-family: var(--serif); font-size: 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; padding: 14px 22px; border-radius: 999px; cursor: pointer; flex: 1 1 180px; max-width: 260px; }
+    .act-btn.solid { border: none; background: var(--brand-pale); color: var(--ink); box-shadow: 0 10px 24px -14px rgba(157, 96, 22, .6); }
+    .act-btn.solid:hover { background: var(--sand); }
+    .act-btn.line { border: 1px solid var(--sand); background: transparent; color: var(--brand-deep); }
+    .act-btn.line:hover { background: #fffaf3; }
 
     /* ── Galería ── */
     .gal-head { text-align: center; margin: 46px 0 16px; }
@@ -216,6 +222,10 @@
         <div class="thanks" id="thanks" hidden>
           <div class="big">¡Gracias!</div>
           <p id="thanks-text"></p>
+          <div class="thanks-actions">
+            <button class="act-btn solid" id="more-btn" type="button">Subir más fotos</button>
+            <button class="act-btn line" id="gallery-btn" type="button">Ver la galería</button>
+          </div>
         </div>
       </div>
     </section>
@@ -225,7 +235,7 @@
     <div class="gal-head">
       <div class="eyebrow">En directo</div>
       <h2>La boda vista por vosotros</h2>
-      <p>Las fotos aparecen aquí unos minutos después de subirlas.</p>
+      <p>Las fotos aparecen aquí unos minutos después de subirlas. Se actualiza sola.</p>
     </div>
     <button class="new-pill" id="new-pill" hidden></button>
     <div class="grid" id="grid"></div>
@@ -240,7 +250,7 @@
       <button class="v-btn v-nav v-prev" id="v-prev" aria-label="Anterior"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>
       <button class="v-btn v-nav v-next" id="v-next" aria-label="Siguiente"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
     </div>
-    <div class="v-bottom"><a id="v-download" href="#" target="_blank" rel="noopener">Descargar</a></div>
+    <div class="v-bottom"><a id="v-download" href="#" target="_blank" rel="noopener noreferrer">Descargar</a></div>
   </div>
 
   <script>
@@ -420,7 +430,9 @@
       $('sum-bar').querySelector('i').style.width = (bytes ? 100 * sent / bytes : 0) + '%';
       $('sum-bar').classList.toggle('done', !busy && !err && ok === total);
       $('keep-open').hidden = !busy;
+      const wasHidden = $('thanks').hidden;
       $('thanks').hidden = busy || ok === 0;
+      if (wasHidden && !$('thanks').hidden) setTimeout(() => $('thanks').scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
       $('thanks-text').textContent = `${ok === 1 ? 'Tu archivo ya está' : 'Tus ' + ok + ' archivos ya están'} en el álbum de los novios. Aparecerán en la galería en unos minutos.`;
     }
 
@@ -432,6 +444,14 @@
     }
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && running) keepAwake(true); });
     window.addEventListener('beforeunload', e => { if (items.some(i => i.status === 'up' || i.status === 'queued')) { e.preventDefault(); e.returnValue = ''; } });
+
+    // Al terminar: subir más (limpia lo ya subido y abre la galería del móvil) o ir a la galería
+    $('more-btn').onclick = () => {
+      for (let i = items.length - 1; i >= 0; i--) if (items[i].status === 'ok') { items[i].li.remove(); items.splice(i, 1); }
+      if (!items.length) $('progress').hidden = true; else renderSummary();
+      $('file-input').click();
+    };
+    $('gallery-btn').onclick = () => { loadGallery(); $('galeria').scrollIntoView({ behavior: 'smooth' }); };
 
     // Nombre recordado
     $('guest').value = store.get('lb_guest') || '';
@@ -452,10 +472,17 @@
       b.className = 'tile' + (fresh ? ' fresh' : '');
       b.setAttribute('aria-label', it.type === 'video' ? 'Ver vídeo' : 'Ver foto');
       const img = document.createElement('img');
-      img.loading = 'lazy'; img.alt = '';
+      img.loading = 'lazy'; img.alt = ''; img.referrerPolicy = 'no-referrer';   // Google bloquea miniaturas pedidas con referer de otra web
       if (it.w && it.h) { img.width = it.w; img.height = it.h; }
-      img.onload = () => img.classList.add('loaded');
-      img.onerror = () => { if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = thumbUrl2(it.id, 600); } else b.style.display = 'none'; };
+      // Recién publicada, Google puede tardar en tener la miniatura: se oculta y se reintenta unos minutos
+      let tries = 0;
+      img.onerror = () => {
+        tries++;
+        if (tries === 1) { img.src = thumbUrl2(it.id, 600); return; }
+        b.hidden = true;
+        if (tries < 12) setTimeout(() => { img.src = thumbUrl(it.id, 600) + '?r=' + tries; }, 20000);
+      };
+      img.onload = () => { img.classList.add('loaded'); b.hidden = false; };
       img.src = thumbUrl(it.id, 600);
       b.appendChild(img);
       if (it.type === 'video') b.insertAdjacentHTML('beforeend', '<span class="play"><i>' + ICON_PLAY + '</i></span>');
@@ -498,6 +525,8 @@
     };
     loadGallery();
     setInterval(() => { if (document.visibilityState === 'visible') loadGallery(); }, GALLERY_REFRESH_MS);
+    // Al volver a la página (desbloquear el móvil, cambiar de app) se pone al día en el momento
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') loadGallery(); });
 
     // ── Visor ──
     let vIndex = -1;
@@ -511,8 +540,8 @@
       const stage = $('v-stage');
       stage.querySelectorAll('img,iframe').forEach(n => n.remove());
       let el;
-      if (it.type === 'video') { el = document.createElement('iframe'); el.src = videoUrl(it.id); el.allow = 'autoplay; fullscreen'; el.allowFullscreen = true; }
-      else { el = document.createElement('img'); el.src = thumbUrl(it.id, 1600); el.alt = ''; el.onerror = () => { if (!el.dataset.alt) { el.dataset.alt = '1'; el.src = thumbUrl2(it.id, 1600); } }; }
+      if (it.type === 'video') { el = document.createElement('iframe'); el.referrerPolicy = 'no-referrer'; el.src = videoUrl(it.id); el.allow = 'autoplay; fullscreen'; el.allowFullscreen = true; }
+      else { el = document.createElement('img'); el.referrerPolicy = 'no-referrer'; el.src = thumbUrl(it.id, 1600); el.alt = ''; el.onerror = () => { if (!el.dataset.alt) { el.dataset.alt = '1'; el.src = thumbUrl2(it.id, 1600); } }; }
       stage.prepend(el);
       $('v-who').textContent = it.guest ? 'De ' + it.guest : '';
       $('v-download').href = downloadUrl(it.id);
