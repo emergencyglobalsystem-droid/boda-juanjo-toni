@@ -237,7 +237,12 @@
     }
     @keyframes jokeIn { 0% { transform: scale(.3) rotate(-10deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
     .joke-big { font-family: var(--script); font-weight: 700; font-size: clamp(48px, 15vw, 64px); line-height: 1; color: var(--brand-deep); }
-    .joke-emoji { font-size: 54px; margin: 6px 0 4px; animation: wiggle 1s ease-in-out infinite; display: inline-block; }
+    .joke-emoji {
+      display: inline-block; width: 104px; height: 104px; margin: 8px 0 6px; border-radius: 50%;
+      background: var(--brand-pale) url(gato.png) no-repeat; background-size: 250px auto; background-position: -120px 4px;
+      box-shadow: 0 0 0 3px var(--sand), 0 10px 24px -10px rgba(157, 96, 22, .6);
+      animation: wiggle 1s ease-in-out infinite;
+    }
     @keyframes wiggle { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg) scale(1.1); } }
     .joke-card p { font-size: 20px; margin: 4px 0 20px; }
     .joke-cat {
@@ -337,7 +342,7 @@
   <div id="joke" hidden onclick="if(event.target===this)closeJoke()">
     <div class="joke-card">
       <div class="joke-big">…es broma</div>
-      <div class="joke-emoji">😄</div>
+      <div class="joke-emoji" role="img" aria-label="Gato riéndose"></div>
       <p>Pero la misión va muy en serio.<br>Gracias, agente.</p>
       <button class="btn" onclick="closeJoke()">Volver a mi misión</button>
     </div>
