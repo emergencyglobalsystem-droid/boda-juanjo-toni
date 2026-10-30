@@ -29,6 +29,7 @@
     }
 
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html { -webkit-text-size-adjust: 100%; }
     body {
       margin: 0;
@@ -181,7 +182,72 @@
     .divider i { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); }
     .mission-text { font-size: 19px; color: var(--ink); text-align: left; margin: 0 auto; max-width: 440px; }
     .mission-text p { margin: 0 0 12px; }
-    .destruct { margin-top: 26px; font-size: 15px; font-style: italic; color: var(--faint); min-height: 1.5em; }
+    .destruct { margin-top: 26px; font-size: 16px; font-style: italic; color: var(--brand-deep); min-height: 1.5em; }
+
+    /* ── Autodestrucción (es broma) ── */
+    .redacted { color: #b03a2e; }
+    .dossier { transition: filter .6s ease, opacity .6s ease; }
+    .dossier.burnt { filter: sepia(1) saturate(2.5) hue-rotate(-18deg) brightness(.82) blur(1.2px); opacity: .55; }
+    body.shake-1 .shakeable { animation: shake .16s infinite; --amp: 1.5px; }
+    body.shake-2 .shakeable { animation: shake .12s infinite; --amp: 3.5px; }
+    body.shake-3 .shakeable { animation: shake .08s infinite; --amp: 7px; }
+    body.shake-boom .shakeable { animation: shake .06s 8; --amp: 16px; }
+    @keyframes shake {
+      0% { transform: translate(0, 0) rotate(0); }
+      25% { transform: translate(var(--amp), calc(var(--amp) * -.6)) rotate(.4deg); }
+      50% { transform: translate(calc(var(--amp) * -.8), calc(var(--amp) * .5)) rotate(-.5deg); }
+      75% { transform: translate(calc(var(--amp) * .6), var(--amp)) rotate(.3deg); }
+      100% { transform: translate(0, 0) rotate(0); }
+    }
+    #alarm { position: fixed; inset: 0; z-index: 900; pointer-events: none; animation: alarmPulse .5s ease-in-out infinite alternate; }
+    @keyframes alarmPulse {
+      from { box-shadow: inset 0 0 40px 6px rgba(200, 20, 20, .35); background: rgba(200, 20, 20, 0); }
+      to { box-shadow: inset 0 0 120px 30px rgba(200, 20, 20, .75); background: rgba(200, 20, 20, .10); }
+    }
+    .alarm-top {
+      position: absolute; top: 0; left: 0; right: 0; padding: 10px 12px;
+      background: #b03a2e; color: #fff; text-align: center;
+      font-weight: 700; font-size: 13px; letter-spacing: .22em; text-transform: uppercase;
+      animation: blink .5s steps(1) infinite;
+    }
+    @keyframes blink { 50% { background: #7a1c14; } }
+    #countdown {
+      position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 950;
+      transform: translateX(-50%); width: min(92vw, 420px);
+      background: #fff; border: 3px solid #b03a2e; border-radius: 18px;
+      box-shadow: 0 18px 50px -12px rgba(176, 58, 46, .7);
+      text-align: center; padding: 12px 16px 6px;
+    }
+    .cdx-label { font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #b03a2e; }
+    .cdx-num { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 800; font-size: 84px; line-height: 1.05; color: #b03a2e; display: inline-block; text-shadow: 0 0 18px rgba(176, 58, 46, .45); }
+    .cdx-num.slam { animation: slam .45s cubic-bezier(.2, 1.6, .4, 1); }
+    @keyframes slam { 0% { transform: scale(2.8); opacity: 0; } 60% { transform: scale(.9); opacity: 1; } 100% { transform: scale(1); } }
+    #flash { position: fixed; inset: 0; z-index: 980; background: #fff; pointer-events: none; animation: flash .7s ease-out forwards; }
+    @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+    #fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 990; pointer-events: none; }
+    #joke {
+      position: fixed; inset: 0; z-index: 970; display: flex; align-items: center; justify-content: center;
+      padding: 24px; background: rgba(13, 13, 13, .55); backdrop-filter: blur(3px); overflow: hidden;
+    }
+    .joke-card {
+      position: relative; z-index: 2; width: min(100%, 400px);
+      background: var(--paper); border-radius: 22px; padding: 30px 24px 26px; text-align: center;
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .6);
+      animation: jokeIn .7s cubic-bezier(.2, 1.5, .4, 1) both;
+    }
+    @keyframes jokeIn { 0% { transform: scale(.3) rotate(-10deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+    .joke-big { font-family: var(--script); font-weight: 700; font-size: clamp(48px, 15vw, 64px); line-height: 1; color: var(--brand-deep); }
+    .joke-emoji { font-size: 54px; margin: 6px 0 4px; animation: wiggle 1s ease-in-out infinite; display: inline-block; }
+    @keyframes wiggle { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg) scale(1.1); } }
+    .joke-card p { font-size: 20px; margin: 4px 0 20px; }
+    .joke-cat {
+      position: absolute; z-index: 1; left: 50%; bottom: -8px; width: min(62vw, 300px);
+      transform: translate(-50%, 110%); animation: catUp .8s .35s cubic-bezier(.2, 1.4, .4, 1) forwards;
+    }
+    @keyframes catUp { to { transform: translate(-50%, 0); } }
+    @media (prefers-reduced-motion: reduce) {
+      body[class*="shake"] .shakeable, #alarm, .alarm-top, .cdx-num.slam, .joke-emoji { animation: none !important; }
+    }
     .seal { margin-top: 22px; font-family: var(--script); font-size: 24px; color: var(--brand-deep); }
 
     .notfound h1 { font-family: var(--script); font-size: 40px; margin: 10px 0; }
@@ -210,15 +276,15 @@
     <a class="back" href="/">Ir a la web</a>
   </nav>
 
-  <header class="hero">
+  <header class="hero shakeable">
     <div class="eyebrow">Nos casamos</div>
     <div class="hero-illu"><img src="/hero-toni-juanjo-v2.webp" alt="Toñi y Juanjo"></div>
     <div class="hero-rule"><span></span><b>07 · 11 · 2026</b><span></span></div>
     <div class="hero-place">El Jardín de la Estación · Lorquí</div>
   </header>
 
-  <main class="wrap">
-    <div class="dossier">
+  <main class="wrap shakeable">
+    <div class="dossier" id="dossier">
       <div class="stamp">Confidencial</div>
 
       <!-- Fase 1: sobre cerrado -->
@@ -261,6 +327,23 @@
   </main>
 
   <footer>7 · Noviembre · 2026 — Lorquí, Murcia</footer>
+
+  <!-- Autodestrucción (es broma) -->
+  <div id="alarm" hidden><div class="alarm-top">⚠ Alerta · Autodestrucción activada</div></div>
+  <div id="countdown" hidden>
+    <div class="cdx-label">Este mensaje se autodestruirá en</div>
+    <div class="cdx-num" id="cdx-num">5</div>
+  </div>
+  <div id="joke" hidden onclick="if(event.target===this)closeJoke()">
+    <div class="joke-card">
+      <div class="joke-big">…es broma</div>
+      <div class="joke-emoji">😄</div>
+      <p>Pero la misión va muy en serio.<br>Gracias, agente.</p>
+      <button class="btn" onclick="closeJoke()">Volver a mi misión</button>
+    </div>
+    <img class="joke-cat" src="gato.png" alt="">
+  </div>
+  <canvas id="fx"></canvas>
 
   <script src="misiones.js"></script>
   <script>
@@ -312,6 +395,7 @@
       .catch(() => showPhase('phase-notfound'));
 
     async function revealMission() {
+      initAudio();
       showPhase('phase-decoding');
       const wait = new Promise(r => setTimeout(r, 2300));
       try {
@@ -335,18 +419,126 @@
       }
     }
 
-    function selfDestruct() {
-      const el = document.getElementById('destruct');
-      let n = 5;
-      el.textContent = 'Este mensaje se autodestruirá en ' + n + '…';
-      const t = setInterval(() => {
-        n--;
-        if (n > 0) { el.textContent = 'Este mensaje se autodestruirá en ' + n + '…'; }
-        else {
-          clearInterval(t);
-          el.textContent = '…es broma. Pero la misión va muy en serio. Gracias, agente.';
-        }
-      }, 1000);
+    // ── Autodestrucción (es broma) ──
+    const $ = id => document.getElementById(id);
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let audio = null;
+    function initAudio() {
+      try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) { }
+    }
+    function tone(freq, dur, type = 'square', vol = .12, slideTo = null) {
+      if (!audio) return;
+      try {
+        const o = audio.createOscillator(), g = audio.createGain(), t = audio.currentTime;
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+        g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+        o.connect(g).connect(audio.destination); o.start(t); o.stop(t + dur);
+      } catch (e) { }
+    }
+    const buzz = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) { } };
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    // Tachado progresivo del texto de la misión
+    let originals = [];
+    function prepRedact() {
+      originals = [$('mission-title'), ...document.querySelectorAll('#mission-text p')].map(el => {
+        const txt = el.textContent;
+        const idx = [...txt].map((c, i) => c.trim() ? i : -1).filter(i => i >= 0).sort(() => Math.random() - .5);
+        return { el, txt, idx };
+      });
+    }
+    function redact(frac) {
+      originals.forEach(o => {
+        const chars = [...o.txt];
+        o.idx.slice(0, Math.round(o.idx.length * frac)).forEach(i => { chars[i] = '█'; });
+        o.el.textContent = chars.join('');
+        o.el.classList.toggle('redacted', frac > 0);
+      });
+    }
+    async function unredact() {
+      const t0 = performance.now(), d = 1100;
+      return new Promise(res => {
+        (function step(now) {
+          const k = Math.min(1, (now - t0) / d);
+          redact(1 - k);
+          k < 1 ? requestAnimationFrame(step) : res();
+        })(t0);
+      });
+    }
+
+    // Partículas: explosión y confeti con los colores de la web
+    const fx = $('fx'), ctx = fx.getContext('2d');
+    let parts = [], running = false;
+    function burst({ x, y, n, speed, colors, gravity = .25, spread = Math.PI * 2, dir = 0, life = 160 }) {
+      if (calm) return;
+      const dpr = window.devicePixelRatio || 1;
+      fx.width = innerWidth * dpr; fx.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      for (let i = 0; i < n; i++) {
+        const a = dir + (Math.random() - .5) * spread, v = speed * (.4 + Math.random() * .8);
+        parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: gravity, r: Math.random() * 6.28, vr: (Math.random() - .5) * .4,
+          w: 5 + Math.random() * 7, h: 3 + Math.random() * 5, c: colors[i % colors.length], life: life * (.6 + Math.random() * .6) });
+      }
+      if (!running) { running = true; requestAnimationFrame(tick); }
+    }
+    function tick() {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      parts = parts.filter(p => p.life-- > 0 && p.y < innerHeight + 40);
+      parts.forEach(p => {
+        p.vx *= .985; p.vy = p.vy * .985 + p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 40);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      });
+      parts.length ? requestAnimationFrame(tick) : (running = false, ctx.clearRect(0, 0, innerWidth, innerHeight));
+    }
+
+    function setShake(level) {
+      document.body.classList.remove('shake-1', 'shake-2', 'shake-3', 'shake-boom');
+      if (level) document.body.classList.add('shake-' + level);
+    }
+
+    async function selfDestruct() {
+      prepRedact();
+      await sleep(2200);
+      $('alarm').hidden = false;
+      $('countdown').hidden = false;
+      const num = $('cdx-num');
+      const plan = { 5: [1, 0], 4: [1, .08], 3: [2, .25], 2: [3, .5], 1: [3, .82] };
+      for (let n = 5; n >= 1; n--) {
+        num.textContent = n;
+        num.classList.remove('slam'); void num.offsetWidth; num.classList.add('slam');
+        const [lvl, frac] = plan[n];
+        setShake(lvl); redact(frac);
+        tone(n === 1 ? 1320 : 880, .14); buzz(n === 1 ? 160 : 70);
+        await sleep(1000);
+      }
+      // BOOM
+      num.textContent = '💥'; num.classList.remove('slam'); void num.offsetWidth; num.classList.add('slam');
+      redact(1);
+      const flash = document.createElement('div'); flash.id = 'flash'; document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 800);
+      setShake('boom'); buzz([250, 60, 400]);
+      tone(160, .9, 'sawtooth', .22, 30); tone(70, 1.1, 'square', .16, 25);
+      $('alarm').hidden = true;
+      $('dossier').classList.add('burnt');
+      const cx = innerWidth / 2, cy = innerHeight * .45;
+      burst({ x: cx, y: cy, n: 160, speed: 16, colors: ['#b03a2e', '#F29422', '#F2B366', '#3a1d0e', '#ffdd99'], gravity: .18, life: 120 });
+      await sleep(1300);
+      setShake(0);
+      $('countdown').hidden = true;
+      // …es broma
+      $('joke').hidden = false;
+      tone(660, .12, 'triangle', .14); setTimeout(() => tone(990, .2, 'triangle', .14), 130);
+      burst({ x: innerWidth * .2, y: innerHeight, n: 90, speed: 19, dir: -Math.PI / 2 + .25, spread: .9, colors: ['#F29422', '#F2B366', '#9d6016', '#FCEBD2', '#ffffff', '#7aab6e'] });
+      burst({ x: innerWidth * .8, y: innerHeight, n: 90, speed: 19, dir: -Math.PI / 2 - .25, spread: .9, colors: ['#F29422', '#F2B366', '#9d6016', '#FCEBD2', '#ffffff', '#7aab6e'] });
+      $('dossier').classList.remove('burnt');
+      unredact();
+    }
+
+    function closeJoke() {
+      $('joke').hidden = true;
+      redact(0);
+      $('destruct').textContent = 'Este mensaje no se autodestruirá. Era broma. Gracias, agente.';
     }
   </script>
 </body>
