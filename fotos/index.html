@@ -7,7 +7,7 @@
   <title>Comparte el momento · Toñi &amp; Juanjo</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#F2F2F2">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📸</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='29' fill='%23FCEBD2' stroke='%239d6016' stroke-width='3'/><text x='32' y='40.5' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='22' fill='%239d6016'>T%26amp;J</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
@@ -88,7 +88,11 @@
       cursor: pointer; text-align: center; transition: background .15s ease, border-color .15s ease;
     }
     .pick:hover, .pick.drag { background: var(--brand-pale); border-color: var(--brand); }
-    .pick .ico { font-size: 40px; line-height: 1; }
+    .ic { width: 22px; height: 22px; display: block; }
+    .ic.big { width: 46px; height: 46px; }
+    .ic.ok { color: var(--green); width: 26px; height: 26px; }
+    .ic.err { color: var(--red); width: 26px; height: 26px; }
+    .pick .ico { color: var(--brand-deep); line-height: 1; }
     .pick b { font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin-top: 6px; }
     .pick span { font-size: 15px; color: var(--muted); font-style: italic; }
     #file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -101,7 +105,8 @@
 
     .queue { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
     .item { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; }
-    .thumb { width: 56px; height: 56px; border-radius: 10px; background: var(--brand-pale) center / cover no-repeat; display: flex; align-items: center; justify-content: center; font-size: 22px; overflow: hidden; }
+    .thumb { width: 56px; height: 56px; border-radius: 10px; background: var(--brand-pale) center / cover no-repeat; display: flex; align-items: center; justify-content: center; color: var(--brand-deep); overflow: hidden; }
+    .thumb .ic { width: 28px; height: 28px; }
     .thumb video { width: 100%; height: 100%; object-fit: cover; }
     .meta { min-width: 0; }
     .meta .name { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -109,7 +114,7 @@
     .meta .bar { margin-top: 5px; height: 4px; }
     .item.ok .state { color: var(--green); font-style: normal; }
     .item.err .state { color: var(--red); font-style: normal; }
-    .item .act { font-size: 20px; width: 32px; text-align: center; }
+    .item .act { width: 32px; display: flex; justify-content: center; }
     .retry { border: none; background: var(--brand-pale); border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
 
     .notice { margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: #fff4e6; color: var(--brand-deep); font-size: 16px; text-align: center; }
@@ -136,7 +141,8 @@
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .35));
     }
-    .tile .play::before { content: '▶'; width: 46px; height: 46px; border-radius: 50%; background: rgba(255, 255, 255, .9); color: var(--brand-deep); display: flex; align-items: center; justify-content: center; font-size: 18px; padding-left: 4px; }
+    .tile .play i { width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--brand-deep); display: flex; align-items: center; justify-content: center; }
+    .tile .play i .ic { width: 30px; height: 30px; }
     .tile .who { position: absolute; left: 8px; bottom: 6px; right: 8px; color: #fff; font-size: 13px; text-align: left; text-shadow: 0 1px 3px rgba(0, 0, 0, .7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .empty { text-align: center; color: var(--faint); font-style: italic; padding: 30px 10px; }
     .new-pill {
@@ -148,7 +154,7 @@
     #viewer { position: fixed; inset: 0; z-index: 1500; background: rgba(10, 8, 6, .94); display: flex; flex-direction: column; }
     .v-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; color: #fff; padding-top: max(10px, env(safe-area-inset-top)); }
     .v-top .who { font-size: 16px; opacity: .85; }
-    .v-btn { border: none; background: rgba(255, 255, 255, .12); color: #fff; width: 42px; height: 42px; border-radius: 50%; font-size: 22px; cursor: pointer; }
+    .v-btn { border: none; background: rgba(255, 255, 255, .12); color: #fff; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .v-stage { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 0 8px; }
     .v-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
     .v-stage iframe { width: min(100%, 900px); height: min(100%, 70vh); border: 0; border-radius: 8px; background: #000; }
@@ -197,7 +203,7 @@
 
       <label class="pick" id="pick">
         <input type="file" id="file-input" accept="image/*,video/*" multiple>
-        <div class="ico">📸</div>
+        <div class="ico"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.8l1.4-2h6.6l1.4 2h1.8A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.6" r="3.8"/></svg></div>
         <b>Elegir fotos y vídeos</b>
         <span>Puedes elegir varias a la vez</span>
       </label>
@@ -206,7 +212,7 @@
         <div class="summary"><span id="sum-text"></span><span id="sum-size"></span></div>
         <div class="bar" id="sum-bar"><i></i></div>
         <ul class="queue" id="queue"></ul>
-        <div class="notice" id="keep-open" hidden>No cierres esta página hasta que termine 🙏</div>
+        <div class="notice" id="keep-open" hidden>No cierres esta página hasta que termine de subir.</div>
         <div class="thanks" id="thanks" hidden>
           <div class="big">¡Gracias!</div>
           <p id="thanks-text"></p>
@@ -229,10 +235,10 @@
   <footer>7 · Noviembre · 2026 — Lorquí, Murcia</footer>
 
   <div id="viewer" hidden>
-    <div class="v-top"><span class="who" id="v-who"></span><button class="v-btn" id="v-close" aria-label="Cerrar">✕</button></div>
+    <div class="v-top"><span class="who" id="v-who"></span><button class="v-btn" id="v-close" aria-label="Cerrar"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div>
     <div class="v-stage" id="v-stage">
-      <button class="v-btn v-nav v-prev" id="v-prev" aria-label="Anterior">‹</button>
-      <button class="v-btn v-nav v-next" id="v-next" aria-label="Siguiente">›</button>
+      <button class="v-btn v-nav v-prev" id="v-prev" aria-label="Anterior"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button>
+      <button class="v-btn v-nav v-next" id="v-next" aria-label="Siguiente"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
     </div>
     <div class="v-bottom"><a id="v-download" href="#" target="_blank" rel="noopener">Descargar</a></div>
   </div>
@@ -247,6 +253,9 @@
     const thumbUrl2 = (id, w) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
     const videoUrl = id => `https://drive.google.com/file/d/${id}/preview`;
     const downloadUrl = id => `https://drive.google.com/uc?export=download&id=${id}`;
+    const ICON_PLAY = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.2 8.6v6.8l5.3-3.4z" fill="currentColor" stroke="none"/></svg>';
+    const ICON_OK = '<svg class="ic ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.7 2.7L16.2 9.6"/></svg>';
+    const ICON_ERR = '<svg class="ic err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.6M12 16.4v.1"/></svg>';
 
     // ── Candado: misma contraseña y clave que la web. El QR de las mesas entra directo (#entrar). ──
     const SITE_GATE_PASS = 'laboda2026';
@@ -361,7 +370,7 @@
         const li = document.createElement('li');
         li.className = 'item';
         const isVideo = /^video\//.test(file.type) || /\.(mov|mp4|m4v|3gp|webm)$/i.test(file.name);
-        li.innerHTML = `<div class="thumb">${isVideo ? '🎬' : ''}</div><div class="meta"><div class="name"></div><div class="state">En cola</div><div class="bar"><i></i></div></div><div class="act"></div>`;
+        li.innerHTML = `<div class="thumb">${isVideo ? ICON_PLAY : ''}</div><div class="meta"><div class="name"></div><div class="state">En cola</div><div class="bar"><i></i></div></div><div class="act"></div>`;
         li.querySelector('.name').textContent = file.name;
         if (!isVideo && /^image\/(jpeg|png|gif|webp)$/.test(file.type)) {
           const url = URL.createObjectURL(file);
@@ -387,7 +396,7 @@
         keepAwake(true);
         uploadOne(next).then(() => {
           next.status = 'ok'; next.li.classList.add('ok'); next.li.classList.remove('err');
-          next.setState('Subida ✓'); next.li.querySelector('.act').textContent = '✅';
+          next.setState('Subida'); next.li.querySelector('.act').innerHTML = ICON_OK;
         }).catch(err => {
           next.status = 'err'; next.li.classList.add('err');
           next.setState(err.fatal === 'expired' ? 'Se cortó demasiado tiempo' : (err.fatal || 'Error'));
@@ -395,7 +404,7 @@
             const b = document.createElement('button'); b.className = 'retry'; b.textContent = 'Reintentar';
             b.onclick = () => { next.status = 'queued'; next.li.classList.remove('err'); next.setProgress(0); next.setState('En cola'); next.li.querySelector('.act').textContent = ''; pump(); };
             next.li.querySelector('.act').replaceChildren(b);
-          } else next.li.querySelector('.act').textContent = '⚠️';
+          } else next.li.querySelector('.act').innerHTML = ICON_ERR;
         }).finally(() => { running--; renderSummary(); pump(); });
       }
       if (!running) keepAwake(false);
@@ -449,7 +458,7 @@
       img.onerror = () => { if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = thumbUrl2(it.id, 600); } else b.style.display = 'none'; };
       img.src = thumbUrl(it.id, 600);
       b.appendChild(img);
-      if (it.type === 'video') b.insertAdjacentHTML('beforeend', '<span class="play"></span>');
+      if (it.type === 'video') b.insertAdjacentHTML('beforeend', '<span class="play"><i>' + ICON_PLAY + '</i></span>');
       if (it.guest) { const w = document.createElement('span'); w.className = 'who'; w.textContent = it.guest; b.appendChild(w); }
       b.onclick = () => openViewer(gallery.findIndex(x => x.id === it.id));
       return b;
@@ -478,7 +487,7 @@
         if (fresh.length) {
           const nearTop = window.scrollY < $('galeria').offsetTop + 200;
           if (nearTop) { gallery = fresh.concat(gallery); showItems(fresh, true); }
-          else { pendingNew = fresh.concat(pendingNew); $('new-pill').textContent = `↑ ${pendingNew.length} nueva${pendingNew.length > 1 ? 's' : ''}`; $('new-pill').hidden = false; }
+          else { pendingNew = fresh.concat(pendingNew); $('new-pill').textContent = `Ver ${pendingNew.length} foto${pendingNew.length > 1 ? 's' : ''} nueva${pendingNew.length > 1 ? 's' : ''}`; $('new-pill').hidden = false; }
         }
         $('empty').hidden = gallery.length > 0;
       } catch (e) { /* sin conexión: se reintenta en el siguiente ciclo */ }
