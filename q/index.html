@@ -245,11 +245,6 @@
     }
     @keyframes wiggle { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg) scale(1.1); } }
     .joke-card p { font-size: 20px; margin: 4px 0 20px; }
-    .joke-cat {
-      position: absolute; z-index: 1; left: 50%; bottom: -8px; width: min(62vw, 300px);
-      transform: translate(-50%, 110%); animation: catUp .8s .35s cubic-bezier(.2, 1.4, .4, 1) forwards;
-    }
-    @keyframes catUp { to { transform: translate(-50%, 0); } }
     @media (prefers-reduced-motion: reduce) {
       body[class*="shake"] .shakeable, #alarm, .alarm-top, .cdx-num.slam, .joke-emoji { animation: none !important; }
     }
@@ -346,7 +341,6 @@
       <p>Pero la misión va muy en serio.<br>Gracias, agente.</p>
       <button class="btn" onclick="closeJoke()">Volver a mi misión</button>
     </div>
-    <img class="joke-cat" src="gato.png" alt="">
   </div>
   <canvas id="fx"></canvas>
 
